@@ -6,12 +6,28 @@ import ui.rsc
 import numpy as np
 import time
 
+# Initalize GPIO pins on raspberry pi
+try:
+    import RPi.GPIO as GPIO
+
+    GPIO.setmode(GPIO.BCM)
+    pins = [i for i in range(2, 12)]
+    GPIO.setup(pins, GPIO.OUT)
+    
+except:
+    print('Something went wrong')
+    # Implement an emulator
+    pass
+
 
 class GasControl(QtWidgets.QMainWindow):
     def __init__(self):
         super(GasControl, self).__init__()
 
         uic.loadUi("ui/gas-UI.ui", self)
+        
+        # Which gas connected to which (GPIO Pin)/(Relay-1) .
+        self.valve_relay_dict = {'Ar': 2, 'H2': 3, 'N2': 4, 'NH3': 5, 'CO': 6}
 
         # Multithread control
         self.threadpool = QtCore.QThreadPool()
@@ -29,16 +45,27 @@ class GasControl(QtWidgets.QMainWindow):
         self.pushButton_1.clicked.connect(self.bt1)
         self.pushButton_2.clicked.connect(self.bt2)
 
-        self.ar_valve.clicked.connect(lambda: self.toggle_valve('Ar'))
-        self.h_valve.clicked.connect(lambda: self.toggle_valve('H2'))
-        self.n_valve.clicked.connect(lambda: self.toggle_valve('N2'))
-        self.nh3_valve.clicked.connect(lambda: self.toggle_valve('NH3'))
-        self.co_valve.clicked.connect(lambda: self.toggle_valve('CO'))
 
-    def toggle_valve(self, gas, *args, **kwargs):
-        if self.ar_valve.isChecked():
+        # Checks the GPIO to see which valves are opened
+        self.ar_valve.setChecked(not GPIO.input(self.valve_relay_dict['Ar']))
+        self.h_valve.setChecked(not GPIO.input(self.valve_relay_dict['H2']))
+        self.n_valve.setChecked(not GPIO.input(self.valve_relay_dict['N2']))
+        self.nh3_valve.setChecked(not GPIO.input(self.valve_relay_dict['NH3']))
+        self.co_valve.setChecked(not GPIO.input(self.valve_relay_dict['CO']))
+
+        # Opening/Closing Valves upstream of mass flow controllers
+        self.ar_valve.clicked.connect(lambda checked: self.toggle_valve(checked, 'Ar'))
+        self.h_valve.clicked.connect(lambda checked: self.toggle_valve(checked, 'H2'))
+        self.n_valve.clicked.connect(lambda checked: self.toggle_valve(checked, 'N2'))
+        self.nh3_valve.clicked.connect(lambda checked: self.toggle_valve(checked, 'NH3'))
+        self.co_valve.clicked.connect(lambda checked: self.toggle_valve(checked, 'CO'))
+
+    def toggle_valve(self, checked, gas):
+        if checked:
+            GPIO.output(self.valve_relay_dict[gas], GPIO.LOW)
             print(f'Opened valve for {gas}')
         else:
+            GPIO.output(self.valve_relay_dict[gas], GPIO.HIGH)
             print(f'Closed valve for {gas}')
 
     def btclick(self, btno):
