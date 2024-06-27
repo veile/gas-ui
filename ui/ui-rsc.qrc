@@ -1,0 +1,9 @@
+<RCC>
+  <qresource prefix="ui-elements">
+    <file>images/magnet_icon.ico</file>
+    <file>images/UI_elements/hover_on_btn.png</file>
+    <file>images/UI_elements/hover_btn.png</file>
+    <file>images/UI_elements/off_btn.png</file>
+    <file>images/UI_elements/on_btn.png</file>
+  </qresource>
+</RCC>
