@@ -15,9 +15,21 @@ try:
     GPIO.setup(pins, GPIO.OUT)
     
 except:
-    print('Something went wrong')
-    # Implement an emulator
-    pass
+    class GPIO():
+        def __init__(self):
+            pass
+
+        def setmode(self, input):
+            print(f'Set mode to {input}')
+
+        def setup(self, pins, mode):
+            print(f'Setup pins {pins} to {mode}')
+
+        def output(self, pins, level):
+            print(f'Pins {pins} set to {level}')
+
+        def input(self, pin):
+            return True
 
 
 class GasControl(QtWidgets.QMainWindow):
