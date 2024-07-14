@@ -2,44 +2,39 @@
 # ---------------------- main.py -----------------------
 # ------------------------------------------------------
 from PyQt5 import QtWidgets, uic, QtCore
-import ui.rsc
+import os
 import numpy as np
 import time
 
 # Initalize GPIO pins on raspberry pi
 try:
     import RPi.GPIO as GPIO
+    from mks import MFC
 
     GPIO.setmode(GPIO.BCM)
     pins = [i for i in range(2, 12)]
     GPIO.setup(pins, GPIO.OUT)
+
+    m = MFC()
     
 except:
-    class GPIO():
-        def __init__(self):
-            pass
+    import emulators.GPIO as GPIO
+    from emulators.mks import MFC
 
-        def setmode(self, input):
-            print(f'Set mode to {input}')
-
-        def setup(self, pins, mode):
-            print(f'Setup pins {pins} to {mode}')
-
-        def output(self, pins, level):
-            print(f'Pins {pins} set to {level}')
-
-        def input(self, pin):
-            return True
-
+    m = MFC()
 
 class GasControl(QtWidgets.QMainWindow):
     def __init__(self):
         super(GasControl, self).__init__()
 
+        # Load the UI Page - added path too
+        # ui_path = os.path.dirname(os.path.abspath(__file__))
+        # uic.loadUi(os.path.join(ui_path, "ui/gas-UI.ui"), self)
         uic.loadUi("ui/gas-UI.ui", self)
         
         # Which gas connected to which (GPIO Pin)/(Relay-1) .
         self.valve_relay_dict = {'Ar': 2, 'H2': 3, 'N2': 4, 'NH3': 5, 'CO': 6}
+        self.mfc_addr = {'Ar': 230, 'H2': 231, 'N2': 232, 'NH3': 233, 'CO': 234} # Check these values in lab
 
         # Multithread control
         self.threadpool = QtCore.QThreadPool()
@@ -51,7 +46,7 @@ class GasControl(QtWidgets.QMainWindow):
         self.rs232options = RS232Options()
 
         # Plot actions
-        self.pushButton_set_flows.clicked.connect(self.update_plot)
+        # self.pushButton_set_flows.clicked.connect(self.update_plot)
 
         # Button test
         self.pushButton_1.clicked.connect(self.bt1)
@@ -72,6 +67,10 @@ class GasControl(QtWidgets.QMainWindow):
         self.nh3_valve.clicked.connect(lambda checked: self.toggle_valve(checked, 'NH3'))
         self.co_valve.clicked.connect(lambda checked: self.toggle_valve(checked, 'CO'))
 
+
+        # Setting the flow from input fields
+        self.pushButton_set_flows.clicked.connect(self.set_flow)
+
     def toggle_valve(self, checked, gas):
         if checked:
             GPIO.output(self.valve_relay_dict[gas], GPIO.LOW)
@@ -79,6 +78,13 @@ class GasControl(QtWidgets.QMainWindow):
         else:
             GPIO.output(self.valve_relay_dict[gas], GPIO.HIGH)
             print(f'Closed valve for {gas}')
+
+    def set_flow(self):
+        m.set_flow(self.ar_flow_input.value(), self.mfc_addr['Ar'])
+        m.set_flow(self.h_flow_input.value(), self.mfc_addr['H2'])
+        m.set_flow(self.n_flow_input.value(), self.mfc_addr['N2'])
+        m.set_flow(self.nh3_flow_input.value(), self.mfc_addr['NH3'])
+        m.set_flow(self.co_flow_input.value(), self.mfc_addr['CO'])
 
     def btclick(self, btno):
         print(f'bt{btno} started')

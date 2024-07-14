@@ -45,8 +45,8 @@
      <rect>
       <x>40</x>
       <y>40</y>
-      <width>431</width>
-      <height>251</height>
+      <width>341</width>
+      <height>201</height>
      </rect>
     </property>
     <layout class="QGridLayout" name="gridLayout">
@@ -417,7 +417,7 @@ QCheckBox::indicator {
      <rect>
       <x>40</x>
       <y>310</y>
-      <width>431</width>
+      <width>341</width>
       <height>91</height>
      </rect>
     </property>
@@ -535,8 +535,8 @@ QCheckBox::indicator {
    <widget class="QPushButton" name="pushButton_1">
     <property name="geometry">
      <rect>
-      <x>80</x>
-      <y>460</y>
+      <x>70</x>
+      <y>440</y>
       <width>75</width>
       <height>23</height>
      </rect>
@@ -548,8 +548,8 @@ QCheckBox::indicator {
    <widget class="QPushButton" name="pushButton_2">
     <property name="geometry">
      <rect>
-      <x>320</x>
-      <y>460</y>
+      <x>270</x>
+      <y>440</y>
       <width>75</width>
       <height>23</height>
      </rect>
