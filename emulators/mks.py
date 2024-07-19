@@ -23,3 +23,6 @@ class MFC:
         """
 
         self.comm('SX!%f' % flow, addr)
+
+    def information(self, addr):
+        return f'Random info about {addr}'

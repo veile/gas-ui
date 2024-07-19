@@ -2,6 +2,7 @@
 # ---------------------- main.py -----------------------
 # ------------------------------------------------------
 from PyQt5 import QtWidgets, uic, QtCore
+import ui.rsc
 import os
 import numpy as np
 import time
@@ -14,14 +15,10 @@ try:
     GPIO.setmode(GPIO.BCM)
     pins = [i for i in range(2, 12)]
     GPIO.setup(pins, GPIO.OUT)
-
-    m = MFC()
     
 except:
     import emulators.GPIO as GPIO
     from emulators.mks import MFC
-
-    m = MFC()
 
 class GasControl(QtWidgets.QMainWindow):
     def __init__(self):
@@ -35,6 +32,7 @@ class GasControl(QtWidgets.QMainWindow):
         # Which gas connected to which (GPIO Pin)/(Relay-1) .
         self.valve_relay_dict = {'Ar': 2, 'H2': 3, 'N2': 4, 'NH3': 5, 'CO': 6}
         self.mfc_addr = {'Ar': 230, 'H2': 231, 'N2': 232, 'NH3': 233, 'CO': 234} # Check these values in lab
+        self.m = MFC()
 
         # Multithread control
         self.threadpool = QtCore.QThreadPool()
@@ -55,18 +53,25 @@ class GasControl(QtWidgets.QMainWindow):
 
         # Checks the GPIO to see which valves are opened
         self.ar_valve.setChecked(not GPIO.input(self.valve_relay_dict['Ar']))
-        self.h_valve.setChecked(not GPIO.input(self.valve_relay_dict['H2']))
-        self.n_valve.setChecked(not GPIO.input(self.valve_relay_dict['N2']))
+        self.h2_valve.setChecked(not GPIO.input(self.valve_relay_dict['H2']))
+        self.n2_valve.setChecked(not GPIO.input(self.valve_relay_dict['N2']))
         self.nh3_valve.setChecked(not GPIO.input(self.valve_relay_dict['NH3']))
         self.co_valve.setChecked(not GPIO.input(self.valve_relay_dict['CO']))
 
         # Opening/Closing Valves upstream of mass flow controllers
         self.ar_valve.clicked.connect(lambda checked: self.toggle_valve(checked, 'Ar'))
-        self.h_valve.clicked.connect(lambda checked: self.toggle_valve(checked, 'H2'))
-        self.n_valve.clicked.connect(lambda checked: self.toggle_valve(checked, 'N2'))
+        self.h2_valve.clicked.connect(lambda checked: self.toggle_valve(checked, 'H2'))
+        self.n2_valve.clicked.connect(lambda checked: self.toggle_valve(checked, 'N2'))
         self.nh3_valve.clicked.connect(lambda checked: self.toggle_valve(checked, 'NH3'))
         self.co_valve.clicked.connect(lambda checked: self.toggle_valve(checked, 'CO'))
 
+
+        # Information about mass flow controllers
+        self.ar_info.setText(self.m.information(self.mfc_addr['Ar']))
+        self.h2_info.setText(self.m.information(self.mfc_addr['H2']))
+        self.n2_info.setText(self.m.information(self.mfc_addr['N2']))
+        self.nh3_info.setText(self.m.information(self.mfc_addr['NH3']))
+        self.co_info.setText(self.m.information(self.mfc_addr['CO']))
 
         # Setting the flow from input fields
         self.pushButton_set_flows.clicked.connect(self.set_flow)
@@ -80,11 +85,11 @@ class GasControl(QtWidgets.QMainWindow):
             print(f'Closed valve for {gas}')
 
     def set_flow(self):
-        m.set_flow(self.ar_flow_input.value(), self.mfc_addr['Ar'])
-        m.set_flow(self.h_flow_input.value(), self.mfc_addr['H2'])
-        m.set_flow(self.n_flow_input.value(), self.mfc_addr['N2'])
-        m.set_flow(self.nh3_flow_input.value(), self.mfc_addr['NH3'])
-        m.set_flow(self.co_flow_input.value(), self.mfc_addr['CO'])
+        self.m.set_flow(self.ar_flow_input.value(), self.mfc_addr['Ar'])
+        self.m.set_flow(self.h2_flow_input.value(), self.mfc_addr['H2'])
+        self.m.set_flow(self.n2_flow_input.value(), self.mfc_addr['N2'])
+        self.m.set_flow(self.nh3_flow_input.value(), self.mfc_addr['NH3'])
+        self.m.set_flow(self.co_flow_input.value(), self.mfc_addr['CO'])
 
     def btclick(self, btno):
         print(f'bt{btno} started')

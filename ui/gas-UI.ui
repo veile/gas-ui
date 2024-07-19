@@ -45,30 +45,43 @@
      <rect>
       <x>40</x>
       <y>40</y>
-      <width>341</width>
+      <width>431</width>
       <height>201</height>
      </rect>
     </property>
     <layout class="QGridLayout" name="gridLayout">
-     <item row="2" column="0">
-      <widget class="QLabel" name="label_2">
+     <item row="0" column="0">
+      <widget class="QLabel" name="label_6">
        <property name="font">
         <font>
          <family>Arial</family>
          <pointsize>10</pointsize>
-         <weight>50</weight>
-         <bold>false</bold>
+         <weight>75</weight>
+         <bold>true</bold>
         </font>
        </property>
        <property name="text">
-        <string>Hydrogen</string>
+        <string>Gas</string>
        </property>
       </widget>
      </item>
-     <item row="8" column="1">
-      <widget class="QPushButton" name="pushButton_set_flows">
-       <property name="text">
-        <string>Set</string>
+     <item row="1" column="1">
+      <widget class="QDoubleSpinBox" name="ar_flow_input">
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+       <property name="singleStep">
+        <double>0.100000000000000</double>
+       </property>
+      </widget>
+     </item>
+     <item row="5" column="1">
+      <widget class="QDoubleSpinBox" name="nh3_flow_input">
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+       <property name="singleStep">
+        <double>0.100000000000000</double>
        </property>
       </widget>
      </item>
@@ -87,8 +100,8 @@
        </property>
       </widget>
      </item>
-     <item row="2" column="2" alignment="Qt::AlignHCenter|Qt::AlignVCenter">
-      <widget class="QCheckBox" name="h_valve">
+     <item row="5" column="2" alignment="Qt::AlignHCenter">
+      <widget class="QCheckBox" name="nh3_valve">
        <property name="styleSheet">
         <string notr="true">QCheckBox::indicator:unchecked {
     image: url(:/ui-elements/images/UI_elements/off_btn.png);
@@ -116,8 +129,8 @@ QCheckBox::indicator {
        </property>
       </widget>
      </item>
-     <item row="1" column="0">
-      <widget class="QLabel" name="label">
+     <item row="2" column="0">
+      <widget class="QLabel" name="label_2">
        <property name="font">
         <font>
          <family>Arial</family>
@@ -127,53 +140,7 @@ QCheckBox::indicator {
         </font>
        </property>
        <property name="text">
-        <string>Argon</string>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="1">
-      <widget class="QDoubleSpinBox" name="ar_flow_input">
-       <property name="alignment">
-        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-       </property>
-       <property name="singleStep">
-        <double>0.100000000000000</double>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="2">
-      <widget class="QLabel" name="label_5">
-       <property name="font">
-        <font>
-         <family>Arial</family>
-         <pointsize>10</pointsize>
-         <weight>75</weight>
-         <bold>true</bold>
-        </font>
-       </property>
-       <property name="text">
-        <string>Valve</string>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignCenter</set>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="1">
-      <widget class="QLabel" name="label_4">
-       <property name="font">
-        <font>
-         <family>Arial</family>
-         <pointsize>10</pointsize>
-         <weight>75</weight>
-         <bold>true</bold>
-        </font>
-       </property>
-       <property name="text">
-        <string>mL/min</string>
-       </property>
-       <property name="alignment">
-        <set>Qt::AlignCenter</set>
+        <string>Hydrogen</string>
        </property>
       </widget>
      </item>
@@ -212,23 +179,38 @@ QCheckBox::indicator {
        </property>
       </widget>
      </item>
-     <item row="0" column="0">
-      <widget class="QLabel" name="label_6">
+     <item row="1" column="0">
+      <widget class="QLabel" name="label">
        <property name="font">
         <font>
          <family>Arial</family>
          <pointsize>10</pointsize>
-         <weight>75</weight>
-         <bold>true</bold>
+         <weight>50</weight>
+         <bold>false</bold>
         </font>
        </property>
        <property name="text">
-        <string>Gas</string>
+        <string>Argon</string>
+       </property>
+      </widget>
+     </item>
+     <item row="5" column="0">
+      <widget class="QLabel" name="label_12">
+       <property name="font">
+        <font>
+         <family>Arial</family>
+         <pointsize>10</pointsize>
+         <weight>50</weight>
+         <bold>false</bold>
+        </font>
+       </property>
+       <property name="text">
+        <string>Ammonia</string>
        </property>
       </widget>
      </item>
      <item row="2" column="1">
-      <widget class="QDoubleSpinBox" name="h_flow_input">
+      <widget class="QDoubleSpinBox" name="h2_flow_input">
        <property name="alignment">
         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
        </property>
@@ -237,18 +219,21 @@ QCheckBox::indicator {
        </property>
       </widget>
      </item>
-     <item row="3" column="1">
-      <widget class="QDoubleSpinBox" name="n_flow_input">
-       <property name="alignment">
-        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+     <item row="7" column="1">
+      <spacer name="verticalSpacer">
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
        </property>
-       <property name="singleStep">
-        <double>0.100000000000000</double>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>20</width>
+         <height>40</height>
+        </size>
        </property>
-      </widget>
+      </spacer>
      </item>
-     <item row="6" column="2" alignment="Qt::AlignHCenter">
-      <widget class="QCheckBox" name="co_valve">
+     <item row="2" column="2" alignment="Qt::AlignHCenter|Qt::AlignVCenter">
+      <widget class="QCheckBox" name="h2_valve">
        <property name="styleSheet">
         <string notr="true">QCheckBox::indicator:unchecked {
     image: url(:/ui-elements/images/UI_elements/off_btn.png);
@@ -276,23 +261,8 @@ QCheckBox::indicator {
        </property>
       </widget>
      </item>
-     <item row="5" column="0">
-      <widget class="QLabel" name="label_12">
-       <property name="font">
-        <font>
-         <family>Arial</family>
-         <pointsize>10</pointsize>
-         <weight>50</weight>
-         <bold>false</bold>
-        </font>
-       </property>
-       <property name="text">
-        <string>Ammonia</string>
-       </property>
-      </widget>
-     </item>
-     <item row="6" column="1">
-      <widget class="QDoubleSpinBox" name="co_flow_input">
+     <item row="3" column="1">
+      <widget class="QDoubleSpinBox" name="n2_flow_input">
        <property name="alignment">
         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
        </property>
@@ -301,21 +271,53 @@ QCheckBox::indicator {
        </property>
       </widget>
      </item>
-     <item row="7" column="1">
-      <spacer name="verticalSpacer">
-       <property name="orientation">
-        <enum>Qt::Vertical</enum>
+     <item row="1" column="3">
+      <widget class="QLineEdit" name="ar_info">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
        </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>20</width>
-         <height>40</height>
-        </size>
+       <property name="readOnly">
+        <bool>true</bool>
        </property>
-      </spacer>
+      </widget>
      </item>
-     <item row="5" column="2" alignment="Qt::AlignHCenter">
-      <widget class="QCheckBox" name="nh3_valve">
+     <item row="3" column="2" alignment="Qt::AlignHCenter">
+      <widget class="QCheckBox" name="n2_valve">
+       <property name="cursor">
+        <cursorShape>ArrowCursor</cursorShape>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QCheckBox::indicator:unchecked {
+    image: url(:/ui-elements/images/UI_elements/off_btn.png);
+}
+
+QCheckBox::indicator:unchecked:hover {
+	image: url(:/ui-elements/images/UI_elements/hover_btn.png);
+}
+
+QCheckBox::indicator:checked:hover {
+	image: url(:/ui-elements/images/UI_elements/hover_on_btn.png);
+}
+
+QCheckBox::indicator:checked {
+   image: url(:/ui-elements/images/UI_elements/on_btn.png);
+}
+
+QCheckBox::indicator {
+    width: 20px;
+    height: 20px;
+}</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+      </widget>
+     </item>
+     <item row="6" column="2" alignment="Qt::AlignHCenter">
+      <widget class="QCheckBox" name="co_valve">
        <property name="styleSheet">
         <string notr="true">QCheckBox::indicator:unchecked {
     image: url(:/ui-elements/images/UI_elements/off_btn.png);
@@ -358,8 +360,51 @@ QCheckBox::indicator {
        </property>
       </widget>
      </item>
-     <item row="5" column="1">
-      <widget class="QDoubleSpinBox" name="nh3_flow_input">
+     <item row="0" column="1">
+      <widget class="QLabel" name="label_4">
+       <property name="font">
+        <font>
+         <family>Arial</family>
+         <pointsize>10</pointsize>
+         <weight>75</weight>
+         <bold>true</bold>
+        </font>
+       </property>
+       <property name="text">
+        <string>mL/min</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignCenter</set>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="2">
+      <widget class="QLabel" name="label_5">
+       <property name="font">
+        <font>
+         <family>Arial</family>
+         <pointsize>10</pointsize>
+         <weight>75</weight>
+         <bold>true</bold>
+        </font>
+       </property>
+       <property name="text">
+        <string>Valve</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignCenter</set>
+       </property>
+      </widget>
+     </item>
+     <item row="8" column="1">
+      <widget class="QPushButton" name="pushButton_set_flows">
+       <property name="text">
+        <string>Set</string>
+       </property>
+      </widget>
+     </item>
+     <item row="6" column="1">
+      <widget class="QDoubleSpinBox" name="co_flow_input">
        <property name="alignment">
         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
        </property>
@@ -368,35 +413,73 @@ QCheckBox::indicator {
        </property>
       </widget>
      </item>
-     <item row="3" column="2" alignment="Qt::AlignHCenter">
-      <widget class="QCheckBox" name="n_valve">
-       <property name="cursor">
-        <cursorShape>ArrowCursor</cursorShape>
+     <item row="2" column="3">
+      <widget class="QLineEdit" name="h2_info">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
        </property>
-       <property name="styleSheet">
-        <string notr="true">QCheckBox::indicator:unchecked {
-    image: url(:/ui-elements/images/UI_elements/off_btn.png);
-}
-
-QCheckBox::indicator:unchecked:hover {
-	image: url(:/ui-elements/images/UI_elements/hover_btn.png);
-}
-
-QCheckBox::indicator:checked:hover {
-	image: url(:/ui-elements/images/UI_elements/hover_on_btn.png);
-}
-
-QCheckBox::indicator:checked {
-   image: url(:/ui-elements/images/UI_elements/on_btn.png);
-}
-
-QCheckBox::indicator {
-    width: 20px;
-    height: 20px;
-}</string>
+       <property name="readOnly">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="3">
+      <widget class="QLineEdit" name="n2_info">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="readOnly">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="5" column="3">
+      <widget class="QLineEdit" name="nh3_info">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="readOnly">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="6" column="3">
+      <widget class="QLineEdit" name="co_info">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="readOnly">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="3">
+      <widget class="QLabel" name="label_13">
+       <property name="font">
+        <font>
+         <family>Arial</family>
+         <pointsize>10</pointsize>
+         <weight>75</weight>
+         <bold>true</bold>
+        </font>
        </property>
        <property name="text">
-        <string/>
+        <string>Device Info</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignCenter</set>
        </property>
       </widget>
      </item>
@@ -416,7 +499,7 @@ QCheckBox::indicator {
     <property name="geometry">
      <rect>
       <x>40</x>
-      <y>310</y>
+      <y>270</y>
       <width>341</width>
       <height>91</height>
      </rect>
@@ -523,7 +606,7 @@ QCheckBox::indicator {
     <property name="geometry">
      <rect>
       <x>40</x>
-      <y>290</y>
+      <y>250</y>
       <width>431</width>
       <height>16</height>
      </rect>
@@ -535,8 +618,8 @@ QCheckBox::indicator {
    <widget class="QPushButton" name="pushButton_1">
     <property name="geometry">
      <rect>
-      <x>70</x>
-      <y>440</y>
+      <x>390</x>
+      <y>270</y>
       <width>75</width>
       <height>23</height>
      </rect>
@@ -548,14 +631,217 @@ QCheckBox::indicator {
    <widget class="QPushButton" name="pushButton_2">
     <property name="geometry">
      <rect>
-      <x>270</x>
-      <y>440</y>
+      <x>390</x>
+      <y>300</y>
       <width>75</width>
       <height>23</height>
      </rect>
     </property>
     <property name="text">
      <string>2</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_15">
+    <property name="geometry">
+     <rect>
+      <x>40</x>
+      <y>380</y>
+      <width>501</width>
+      <height>121</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;img src=&quot;:/images/images/gas_setup.png&quot;/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="valve1">
+    <property name="geometry">
+     <rect>
+      <x>176</x>
+      <y>389</y>
+      <width>21</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="sizePolicy">
+     <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+      <horstretch>0</horstretch>
+      <verstretch>0</verstretch>
+     </sizepolicy>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QCheckBox::indicator:unchecked {
+    image: url(:/ui-elements/images/UI_elements/off_btn.png);
+}
+
+QCheckBox::indicator:unchecked:hover {
+	image: url(:/ui-elements/images/UI_elements/hover_btn.png);
+}
+
+QCheckBox::indicator:checked:hover {
+	image: url(:/ui-elements/images/UI_elements/hover_on_btn.png);
+}
+
+QCheckBox::indicator:checked {
+   image: url(:/ui-elements/images/UI_elements/on_btn.png);
+}
+
+QCheckBox::indicator {
+    width: 20px;
+    height: 20px;
+}</string>
+    </property>
+    <property name="checked">
+     <bool>false</bool>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="valve2">
+    <property name="geometry">
+     <rect>
+      <x>135</x>
+      <y>435</y>
+      <width>21</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="sizePolicy">
+     <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+      <horstretch>0</horstretch>
+      <verstretch>0</verstretch>
+     </sizepolicy>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QCheckBox::indicator:unchecked {
+    image: url(:/ui-elements/images/UI_elements/off_btn.png);
+}
+
+QCheckBox::indicator:unchecked:hover {
+	image: url(:/ui-elements/images/UI_elements/hover_btn.png);
+}
+
+QCheckBox::indicator:checked:hover {
+	image: url(:/ui-elements/images/UI_elements/hover_on_btn.png);
+}
+
+QCheckBox::indicator:checked {
+   image: url(:/ui-elements/images/UI_elements/on_btn.png);
+}
+
+QCheckBox::indicator {
+    width: 20px;
+    height: 20px;
+}</string>
+    </property>
+    <property name="checked">
+     <bool>false</bool>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="valve3">
+    <property name="geometry">
+     <rect>
+      <x>391</x>
+      <y>390</y>
+      <width>21</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="sizePolicy">
+     <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+      <horstretch>0</horstretch>
+      <verstretch>0</verstretch>
+     </sizepolicy>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QCheckBox::indicator:unchecked {
+    image: url(:/ui-elements/images/UI_elements/off_btn.png);
+}
+
+QCheckBox::indicator:unchecked:hover {
+	image: url(:/ui-elements/images/UI_elements/hover_btn.png);
+}
+
+QCheckBox::indicator:checked:hover {
+	image: url(:/ui-elements/images/UI_elements/hover_on_btn.png);
+}
+
+QCheckBox::indicator:checked {
+   image: url(:/ui-elements/images/UI_elements/on_btn.png);
+}
+
+QCheckBox::indicator {
+    width: 20px;
+    height: 20px;
+}</string>
+    </property>
+    <property name="checked">
+     <bool>false</bool>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="valve4">
+    <property name="geometry">
+     <rect>
+      <x>432</x>
+      <y>436</y>
+      <width>21</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="sizePolicy">
+     <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+      <horstretch>0</horstretch>
+      <verstretch>0</verstretch>
+     </sizepolicy>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QCheckBox::indicator:unchecked {
+    image: url(:/ui-elements/images/UI_elements/off_btn.png);
+}
+
+QCheckBox::indicator:unchecked:hover {
+	image: url(:/ui-elements/images/UI_elements/hover_btn.png);
+}
+
+QCheckBox::indicator:checked:hover {
+	image: url(:/ui-elements/images/UI_elements/hover_on_btn.png);
+}
+
+QCheckBox::indicator:checked {
+   image: url(:/ui-elements/images/UI_elements/on_btn.png);
+}
+
+QCheckBox::indicator {
+    width: 20px;
+    height: 20px;
+}</string>
+    </property>
+    <property name="checked">
+     <bool>false</bool>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="btn_reactor">
+    <property name="geometry">
+     <rect>
+      <x>170</x>
+      <y>500</y>
+      <width>75</width>
+      <height>23</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Reactor</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="btn_bypass">
+    <property name="geometry">
+     <rect>
+      <x>340</x>
+      <y>500</y>
+      <width>75</width>
+      <height>23</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Bypass</string>
     </property>
    </widget>
   </widget>

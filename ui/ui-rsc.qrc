@@ -6,4 +6,7 @@
     <file>images/UI_elements/off_btn.png</file>
     <file>images/UI_elements/on_btn.png</file>
   </qresource>
+  <qresource prefix="images">
+    <file>images/gas_setup.png</file>
+  </qresource>
 </RCC>
