@@ -11,7 +11,8 @@ import time
 try:
     import RPi.GPIO as GPIO
     from mks import MFC
-
+    
+    GPIO.setwarnings(False)
     GPIO.setmode(GPIO.BCM)
     pins = [i for i in range(2, 12)]
     GPIO.setup(pins, GPIO.OUT)
@@ -31,24 +32,24 @@ class GasControl(QtWidgets.QMainWindow):
         
         # Which gas connected to which (GPIO Pin)/(Relay-1) .
         self.gas_valves = {
-            'Ar': {'relay': 2, 'button': self.ar_valve},
-            'H2': {'relay': 3, 'button': self.h2_valve},
-            'N2': {'relay': 4, 'button': self.n2_valve},
-            'NH3': {'relay': 5, 'button': self.nh3_valve},
-            'CO': {'relay': 6, 'button': self.co_valve},
-            'V1': {'relay': 7, 'button': self.valve1},
-            'V2': {'relay': 8, 'button': self.valve2},
-            'V3': {'relay': 9, 'button': self.valve3},
-            'V4': {'relay': 10, 'button': self.valve4}
+            'Ar': {'relay': 4, 'button': self.ar_valve},
+            'H2': {'relay': 6, 'button': self.h2_valve},
+            'N2': {'relay': 5, 'button': self.n2_valve},
+            'NH3': {'relay': 3, 'button': self.nh3_valve},
+            'CO': {'relay': 2, 'button': self.co_valve},
+            'V1': {'relay': 10, 'button': self.valve1},
+            'V2': {'relay': 9, 'button': self.valve2},
+            'V3': {'relay': 7, 'button': self.valve3},
+            'V4': {'relay': 8, 'button': self.valve4}
         }
 
         # Mass Flow controller settings
         self.flow_controllers ={
-            'Ar': {'addr': 230, 'flow_input': self.ar_flow_input, 'info': self.ar_info},
-            'H2': {'addr': 231, 'flow_input': self.h2_flow_input, 'info': self.h2_info},
+            'Ar': {'addr': 231, 'flow_input': self.ar_flow_input, 'info': self.ar_info},
+            'H2': {'addr': 233, 'flow_input': self.h2_flow_input, 'info': self.h2_info},
             'N2': {'addr': 232, 'flow_input': self.n2_flow_input, 'info': self.n2_info},
-            'NH3': {'addr': 233, 'flow_input': self.nh3_flow_input, 'info': self.nh3_info},
-            'CO': {'addr': 234, 'flow_input': self.co_flow_input, 'info': self.co_info},
+            'NH3': {'addr': 234, 'flow_input': self.nh3_flow_input, 'info': self.nh3_info},
+            'CO': {'addr': 230, 'flow_input': self.co_flow_input, 'info': self.co_info},
         }
 
         self.m = MFC()
