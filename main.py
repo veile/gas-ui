@@ -30,8 +30,27 @@ class GasControl(QtWidgets.QMainWindow):
         uic.loadUi("ui/gas-UI.ui", self)
         
         # Which gas connected to which (GPIO Pin)/(Relay-1) .
-        self.valve_relay_dict = {'Ar': 2, 'H2': 3, 'N2': 4, 'NH3': 5, 'CO': 6}
-        self.mfc_addr = {'Ar': 230, 'H2': 231, 'N2': 232, 'NH3': 233, 'CO': 234} # Check these values in lab
+        self.gas_valves = {
+            'Ar': {'relay': 2, 'button': self.ar_valve},
+            'H2': {'relay': 3, 'button': self.h2_valve},
+            'N2': {'relay': 4, 'button': self.n2_valve},
+            'NH3': {'relay': 5, 'button': self.nh3_valve},
+            'CO': {'relay': 6, 'button': self.co_valve},
+            'V1': {'relay': 7, 'button': self.valve1},
+            'V2': {'relay': 8, 'button': self.valve2},
+            'V3': {'relay': 9, 'button': self.valve3},
+            'V4': {'relay': 10, 'button': self.valve4}
+        }
+
+        # Mass Flow controller settings
+        self.flow_controllers ={
+            'Ar': {'addr': 230, 'flow_input': self.ar_flow_input, 'info': self.ar_info},
+            'H2': {'addr': 231, 'flow_input': self.h2_flow_input, 'info': self.h2_info},
+            'N2': {'addr': 232, 'flow_input': self.n2_flow_input, 'info': self.n2_info},
+            'NH3': {'addr': 233, 'flow_input': self.nh3_flow_input, 'info': self.nh3_info},
+            'CO': {'addr': 234, 'flow_input': self.co_flow_input, 'info': self.co_info},
+        }
+
         self.m = MFC()
 
         # Multithread control
@@ -50,46 +69,60 @@ class GasControl(QtWidgets.QMainWindow):
         self.pushButton_1.clicked.connect(self.bt1)
         self.pushButton_2.clicked.connect(self.bt2)
 
+        for gas_valve in self.gas_valves.values():
+            btn, relay = gas_valve['button'], gas_valve['relay']
 
-        # Checks the GPIO to see which valves are opened
-        self.ar_valve.setChecked(not GPIO.input(self.valve_relay_dict['Ar']))
-        self.h2_valve.setChecked(not GPIO.input(self.valve_relay_dict['H2']))
-        self.n2_valve.setChecked(not GPIO.input(self.valve_relay_dict['N2']))
-        self.nh3_valve.setChecked(not GPIO.input(self.valve_relay_dict['NH3']))
-        self.co_valve.setChecked(not GPIO.input(self.valve_relay_dict['CO']))
+            # Checks the GPIO to see which valves are opened
+            btn.setChecked(not GPIO.input(relay))
+            # Open/closes valve on button press
+            btn.clicked.connect(lambda checked, relay=relay: self.toggle_valve(checked, relay))
 
-        # Opening/Closing Valves upstream of mass flow controllers
-        self.ar_valve.clicked.connect(lambda checked: self.toggle_valve(checked, 'Ar'))
-        self.h2_valve.clicked.connect(lambda checked: self.toggle_valve(checked, 'H2'))
-        self.n2_valve.clicked.connect(lambda checked: self.toggle_valve(checked, 'N2'))
-        self.nh3_valve.clicked.connect(lambda checked: self.toggle_valve(checked, 'NH3'))
-        self.co_valve.clicked.connect(lambda checked: self.toggle_valve(checked, 'CO'))
+        # Bypass / Reactor shortcut
+        self.btn_reactor.clicked.connect(lambda: self.open_valves('reactor'))
+        self.btn_bypass.clicked.connect(lambda: self.open_valves('bypass'))
 
 
         # Information about mass flow controllers
-        self.ar_info.setText(self.m.information(self.mfc_addr['Ar']))
-        self.h2_info.setText(self.m.information(self.mfc_addr['H2']))
-        self.n2_info.setText(self.m.information(self.mfc_addr['N2']))
-        self.nh3_info.setText(self.m.information(self.mfc_addr['NH3']))
-        self.co_info.setText(self.m.information(self.mfc_addr['CO']))
+        for mfc in self.flow_controllers.values():
+            addr, info = mfc['addr'], mfc['info']
+            info.setText(self.m.information(addr))
 
         # Setting the flow from input fields
         self.pushButton_set_flows.clicked.connect(self.set_flow)
 
-    def toggle_valve(self, checked, gas):
+    def toggle_valve(self, checked, relay):
         if checked:
-            GPIO.output(self.valve_relay_dict[gas], GPIO.LOW)
-            print(f'Opened valve for {gas}')
+            GPIO.output(relay, GPIO.LOW)
+            print(f'Opened relay {relay}')
         else:
-            GPIO.output(self.valve_relay_dict[gas], GPIO.HIGH)
-            print(f'Closed valve for {gas}')
+            GPIO.output(relay, GPIO.HIGH)
+            print(f'Closed relay {relay}')
+
+    def open_valves(self, path):
+        if path == 'bypass':
+            remainder = 1
+        elif path == 'reactor':
+            remainder = 0
+        else:
+            raise Exception('Incorrect gas path')
+
+        for gas_valve in self.gas_valves.keys():
+            if 'V' not in gas_valve:
+                continue
+            btn = self.gas_valves[gas_valve]['button']
+            relay = self.gas_valves[gas_valve]['relay']
+            if int(gas_valve[-1]) % 2 == remainder:
+                GPIO.output(relay, GPIO.LOW)
+                btn.setChecked(True)
+
+            else:
+                GPIO.output(relay, GPIO.HIGH)
+                btn.setChecked(False)
 
     def set_flow(self):
-        self.m.set_flow(self.ar_flow_input.value(), self.mfc_addr['Ar'])
-        self.m.set_flow(self.h2_flow_input.value(), self.mfc_addr['H2'])
-        self.m.set_flow(self.n2_flow_input.value(), self.mfc_addr['N2'])
-        self.m.set_flow(self.nh3_flow_input.value(), self.mfc_addr['NH3'])
-        self.m.set_flow(self.co_flow_input.value(), self.mfc_addr['CO'])
+        for mfc in self.flow_controllers.values():
+            addr, flow_input = mfc['addr'], mfc['flow_input']
+            self.m.set_flow(flow_input.value(), addr)
 
     def btclick(self, btno):
         print(f'bt{btno} started')
