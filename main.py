@@ -29,7 +29,7 @@ class GasControl(QtWidgets.QMainWindow):
         # ui_path = os.path.dirname(os.path.abspath(__file__))
         # uic.loadUi(os.path.join(ui_path, "ui/gas-UI.ui"), self)
         uic.loadUi("ui/gas-UI.ui", self)
-        
+
         # Which gas connected to which (GPIO Pin)/(Relay-1) .
         self.gas_valves = {
             'Ar': {'relay': 4, 'button': self.ar_valve},
@@ -45,11 +45,11 @@ class GasControl(QtWidgets.QMainWindow):
 
         # Mass Flow controller settings
         self.flow_controllers ={
-            'Ar': {'addr': 231, 'flow_input': self.ar_flow_input, 'info': self.ar_info},
-            'H2': {'addr': 233, 'flow_input': self.h2_flow_input, 'info': self.h2_info},
-            'N2': {'addr': 232, 'flow_input': self.n2_flow_input, 'info': self.n2_info},
-            'NH3': {'addr': 234, 'flow_input': self.nh3_flow_input, 'info': self.nh3_info},
-            'CO': {'addr': 230, 'flow_input': self.co_flow_input, 'info': self.co_info},
+            'Ar': {'addr': 231, 'flow_input': self.ar_flow_input, 'flow_read': self.ar_flow,'info': self.ar_info},
+            'H2': {'addr': 233, 'flow_input': self.h2_flow_input, 'flow_read': self.h2_flow,'info': self.h2_info},
+            'N2': {'addr': 232, 'flow_input': self.n2_flow_input, 'flow_read': self.n2_flow,'info': self.n2_info},
+            'NH3': {'addr': 234, 'flow_input': self.nh3_flow_input, 'flow_read': self.nh3_flow,'info': self.nh3_info},
+            'CO': {'addr': 230, 'flow_input': self.co_flow_input, 'flow_read': self.co_flow,'info': self.co_info},
         }
 
         self.m = MFC()
@@ -57,7 +57,12 @@ class GasControl(QtWidgets.QMainWindow):
         # Multithread control
         self.threadpool = QtCore.QThreadPool()
 
-        # self.setWindowTitle("In-situ VSM Gas Control")
+        # self.update_flow()
+
+        timer = QtCore.QTimer()
+        timer.timeout.connect(self.test)
+        timer.setInterval(200)
+        timer.start()
 
         # Menubar actions
         self.action_RS232_Settings.triggered.connect(self.open_rs232_options)
@@ -90,6 +95,9 @@ class GasControl(QtWidgets.QMainWindow):
 
         # Setting the flow from input fields
         self.pushButton_set_flows.clicked.connect(self.set_flow)
+
+    def test(self):
+        print('hey')
 
     def toggle_valve(self, checked, relay):
         if checked:
@@ -124,6 +132,16 @@ class GasControl(QtWidgets.QMainWindow):
         for mfc in self.flow_controllers.values():
             addr, flow_input = mfc['addr'], mfc['flow_input']
             self.m.set_flow(flow_input.value(), addr)
+
+    def update_flow(self):
+        for mfc in self.flow_controllers.values():
+            addr, flow_read= mfc['addr'], mfc['flow_read']
+            flow = self.m.read_flow(addr)
+            flow_read.setText(
+                '<html><head/><body><p><span style=" font-weight:600; color:#1fa208;">'+
+                f'{flow:.1f}'+
+                '</span></p></body></html>')
+
 
     def btclick(self, btno):
         print(f'bt{btno} started')
