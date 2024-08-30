@@ -14,7 +14,7 @@ try:
     
     GPIO.setwarnings(False)
     GPIO.setmode(GPIO.BCM)
-    pins = [i for i in range(2, 12)]
+    pins = [2, 3, 4, 5, 6, 7, 8, 12, 13]
     GPIO.setup(pins, GPIO.OUT)
     
 except:
@@ -37,8 +37,8 @@ class GasControl(QtWidgets.QMainWindow):
             'N2': {'relay': 5, 'button': self.n2_valve},
             'NH3': {'relay': 3, 'button': self.nh3_valve},
             'CO': {'relay': 2, 'button': self.co_valve},
-            'V1': {'relay': 10, 'button': self.valve1},
-            'V2': {'relay': 9, 'button': self.valve2},
+            'V1': {'relay': 13, 'button': self.valve1},
+            'V2': {'relay': 12, 'button': self.valve2},
             'V3': {'relay': 7, 'button': self.valve3},
             'V4': {'relay': 8, 'button': self.valve4}
         }
