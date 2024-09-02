@@ -21,6 +21,7 @@ except:
     import emulators.GPIO as GPIO
     from emulators.mks import MFC
 
+
 class GasControl(QtWidgets.QMainWindow):
     def __init__(self):
         super(GasControl, self).__init__()
@@ -57,16 +58,16 @@ class GasControl(QtWidgets.QMainWindow):
         # Multithread control
         self.threadpool = QtCore.QThreadPool()
 
-        # self.update_flow()
-
-        timer = QtCore.QTimer()
-        timer.timeout.connect(self.test)
-        timer.setInterval(200)
-        timer.start()
+        # Maybe run on its own thread - not implemented!
+        self.timer = QtCore.QTimer()
+        self.timer.timeout.connect(self.update_flow)
+        self.timer.start(1000) # Maybe make interval customizable in GUI
 
         # Menubar actions
         self.action_RS232_Settings.triggered.connect(self.open_rs232_options)
         self.rs232options = RS232Options()
+
+        self.actionUpdate_Values.triggered.connect(self.update_control)
 
         # Plot actions
         # self.pushButton_set_flows.clicked.connect(self.update_plot)
@@ -95,9 +96,6 @@ class GasControl(QtWidgets.QMainWindow):
 
         # Setting the flow from input fields
         self.pushButton_set_flows.clicked.connect(self.set_flow)
-
-    def test(self):
-        print('hey')
 
     def toggle_valve(self, checked, relay):
         if checked:
@@ -132,6 +130,12 @@ class GasControl(QtWidgets.QMainWindow):
         for mfc in self.flow_controllers.values():
             addr, flow_input = mfc['addr'], mfc['flow_input']
             self.m.set_flow(flow_input.value(), addr)
+
+    def update_control(self, checked):
+        if not checked:
+            self.timer.stop()
+        else:
+            self.timer.start(1000)
 
     def update_flow(self):
         for mfc in self.flow_controllers.values():
@@ -187,8 +191,8 @@ class RS232Options(QtWidgets.QMainWindow):
         super(RS232Options, self).__init__()
         uic.loadUi("ui/RS232Options.ui", self)
 
-
-app = QtWidgets.QApplication([])
-main_window = GasControl()
-main_window.show()
-app.exec_()
+if __name__ == '__main__':
+    app = QtWidgets.QApplication([])
+    main_window = GasControl()
+    main_window.show()
+    app.exec_()

@@ -915,6 +915,7 @@ QCheckBox::indicator {
      <string>Options</string>
     </property>
     <addaction name="action_RS232_Settings"/>
+    <addaction name="actionUpdate_Values"/>
    </widget>
    <addaction name="menuFIle"/>
    <addaction name="menuOptions"/>
@@ -927,6 +928,17 @@ QCheckBox::indicator {
   <action name="action_RS232_Settings">
    <property name="text">
     <string>RS-232 Settings</string>
+   </property>
+  </action>
+  <action name="actionUpdate_Values">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Update Values</string>
    </property>
   </action>
  </widget>
