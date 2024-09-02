@@ -17,7 +17,6 @@ class TC():
 
         self.tcs = [adafruit_max31856.MAX31856(spi, c, thermocouple_type=getattr(adafruit_max31856.ThermocoupleType, tc_type)) for c in cs]
         for tc in self.tcs:
-
              tc.noise_rejection = 50
 
 

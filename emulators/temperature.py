@@ -22,7 +22,7 @@ class TC():
 
         # print(self.tcs[0].fault)
 
-        return [random.random()*100 for _ in range(self.tcs)]
+        return [random.random()*100 for _ in range(len(self))]
 
     def set_type(self, tc_type='N'):
         print(f'Type set to {tc_type}')

@@ -898,7 +898,7 @@ QCheckBox::indicator {
     <property name="geometry">
      <rect>
       <x>550</x>
-      <y>480</y>
+      <y>490</y>
       <width>341</width>
       <height>20</height>
      </rect>
@@ -908,7 +908,7 @@ QCheckBox::indicator {
     <property name="geometry">
      <rect>
       <x>550</x>
-      <y>510</y>
+      <y>520</y>
       <width>75</width>
       <height>23</height>
      </rect>
@@ -917,20 +917,46 @@ QCheckBox::indicator {
      <string>Measure</string>
     </property>
    </widget>
-   <widget class="QLabel" name="error_output">
+   <widget class="QTextBrowser" name="console_output">
+    <property name="geometry">
+     <rect>
+      <x>40</x>
+      <y>550</y>
+      <width>501</width>
+      <height>171</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_16">
     <property name="geometry">
      <rect>
       <x>550</x>
-      <y>540</y>
-      <width>331</width>
-      <height>61</height>
+      <y>470</y>
+      <width>341</width>
+      <height>16</height>
      </rect>
     </property>
     <property name="text">
-     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#ff0000;&quot;&gt;Error:&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Filename (without extension)&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
-    <property name="alignment">
-     <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+   </widget>
+   <widget class="QPushButton" name="stop_btn">
+    <property name="geometry">
+     <rect>
+      <x>630</x>
+      <y>520</y>
+      <width>75</width>
+      <height>23</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QPushButton {
+background-color: red;
+font: bold;
+}</string>
+    </property>
+    <property name="text">
+     <string>Stop</string>
     </property>
    </widget>
   </widget>
