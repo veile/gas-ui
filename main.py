@@ -2,10 +2,14 @@
 # ---------------------- main.py -----------------------
 # ------------------------------------------------------
 from PyQt5 import QtWidgets, uic, QtCore
+from datetime import datetime
+
 import ui.rsc
 import os
 import numpy as np
 import time
+
+from functions import measure
 
 # Initalize GPIO pins on raspberry pi
 try:
@@ -53,15 +57,21 @@ class GasControl(QtWidgets.QMainWindow):
             'CO': {'addr': 230, 'flow_input': self.co_flow_input, 'flow_read': self.co_flow,'info': self.co_info},
         }
 
+        self.exp_running_flag = False
+
         self.m = MFC()
 
         # Multithread control
         self.threadpool = QtCore.QThreadPool()
 
         # Maybe run on its own thread - not implemented!
+        # Maybe timer should be separate from plot timer
         self.timer = QtCore.QTimer()
         self.timer.timeout.connect(self.update_flow)
         self.timer.start(1000) # Maybe make interval customizable in GUI
+
+        # Setting current date into filename
+        self.filename_input.setText(datetime.today().strftime('%Y-%m-%d'))
 
         # Menubar actions
         self.action_RS232_Settings.triggered.connect(self.open_rs232_options)
@@ -72,9 +82,9 @@ class GasControl(QtWidgets.QMainWindow):
         # Plot actions
         # self.pushButton_set_flows.clicked.connect(self.update_plot)
 
-        # Button test
-        self.pushButton_1.clicked.connect(self.bt1)
-        self.pushButton_2.clicked.connect(self.bt2)
+        # # Button test
+        # self.pushButton_1.clicked.connect(self.bt1)
+        # self.pushButton_2.clicked.connect(self.bt2)
 
         for gas_valve in self.gas_valves.values():
             btn, relay = gas_valve['button'], gas_valve['relay']
@@ -96,6 +106,10 @@ class GasControl(QtWidgets.QMainWindow):
 
         # Setting the flow from input fields
         self.pushButton_set_flows.clicked.connect(self.set_flow)
+
+
+        # Starting measurement
+        self.start_measurement_btn.clicked.connect(self.start_measurement)
 
     def toggle_valve(self, checked, relay):
         if checked:
@@ -146,19 +160,31 @@ class GasControl(QtWidgets.QMainWindow):
                 f'{flow:.1f}'+
                 '</span></p></body></html>')
 
+    def start_measurement(self):
+        if self.exp_running_flag:
+            self.error_output.setText('<html><head/><body><p><span style=" color:#ff0000;">'
+                                      'Measurement already running</span></p></body></html>')
+            return
 
-    def btclick(self, btno):
-        print(f'bt{btno} started')
-        time.sleep(5)
-        print(f'bt{btno} ended')
+        self.exp_running_flag = True
+        print('Doing the thing')
+        filename = self.filename_input.text()
 
-    def bt1(self):
-        worker = Worker(self.btclick, 1)
+        worker = Worker(measure, filename=filename)
         self.threadpool.start(worker)
 
-    def bt2(self):
-        worker = Worker(self.btclick, 2)
-        self.threadpool.start(worker)
+    # def btclick(self, btno):
+    #     print(f'bt{btno} started')
+    #     time.sleep(5)
+    #     print(f'bt{btno} ended')
+    #
+    # def bt1(self):
+    #     worker = Worker(self.btclick, 1)
+    #     self.threadpool.start(worker)
+    #
+    # def bt2(self):
+    #     worker = Worker(self.btclick, 2)
+    #     self.threadpool.start(worker)
 
     def open_rs232_options(self):
         self.rs232options.show()
