@@ -22,7 +22,7 @@ try:
     
     GPIO.setwarnings(False)
     GPIO.setmode(GPIO.BCM)
-    pins = [i for i in range(2, 12)]
+    pins = [2, 3, 4, 5, 6, 7, 8, 12, 13]
     GPIO.setup(pins, GPIO.OUT)
     
 except:
@@ -47,8 +47,8 @@ class GasControl(QtWidgets.QMainWindow):
             'N2': {'relay': 5, 'button': self.n2_valve},
             'NH3': {'relay': 3, 'button': self.nh3_valve},
             'CO': {'relay': 2, 'button': self.co_valve},
-            'V1': {'relay': 10, 'button': self.valve1},
-            'V2': {'relay': 9, 'button': self.valve2},
+            'V1': {'relay': 13, 'button': self.valve1},
+            'V2': {'relay': 12, 'button': self.valve2},
             'V3': {'relay': 7, 'button': self.valve3},
             'V4': {'relay': 8, 'button': self.valve4}
         }
@@ -63,7 +63,7 @@ class GasControl(QtWidgets.QMainWindow):
         }
 
         # Thermocouple settings - should be implemented in GUI
-        self.tcs = TC(CS_PINS=[5, 6], tc_type='N')
+        self.tcs = TC(CS_PINS=['D20'], tc_type='N')
 
         self.m = MFC()
 
@@ -164,7 +164,7 @@ class GasControl(QtWidgets.QMainWindow):
         for mfc in self.flow_controllers.values():
             addr, flow_read= mfc['addr'], mfc['flow_read']
             flow = self.m.read_flow(addr)
-            flow_read.setText('<span style=" font-weight:600; color:#1fa208;">'+f'{flow:.1f}'+'</span>')
+            flow_read.setText('<span style=" font-weight:600; color:#1fa208;">'+f'{flow}'+'</span>')
 
     def exp_done(self):
         # self.exp_running_flag = False
