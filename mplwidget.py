@@ -1,20 +1,22 @@
 # # ------------------------------------------------------
 # # -------------------- mplwidget.py --------------------
 # # ------------------------------------------------------
-from PyQt5.QtWidgets import*
-from matplotlib.backends.backend_qt5agg import FigureCanvas
+
+import PyQt5.QtWidgets
+from PyQt5 import QtWidgets
+from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
 
 
-class MplWidget(QWidget):
+class MplWidget(QtWidgets.QWidget):
 
     def __init__(self, parent=None):
 
-        QWidget.__init__(self, parent)
+        QtWidgets.QWidget.__init__(self, parent)
 
         self.canvas = FigureCanvas(Figure())
 
-        vertical_layout = QVBoxLayout()
+        vertical_layout = QtWidgets.QVBoxLayout()
         vertical_layout.addWidget(self.canvas)
 
         self.canvas.axes = self.canvas.figure.add_subplot(111)

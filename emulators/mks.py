@@ -1,3 +1,5 @@
+import random
+
 class MFC:
     def __init__(self):
         pass
@@ -23,6 +25,10 @@ class MFC:
         """
 
         self.comm('SX!%f' % flow, addr)
+
+    def read_flow(self, addr):
+        self.comm('FX?', addr)
+        return random.random()*10
 
     def information(self, addr):
         return f'Random info about {addr}'

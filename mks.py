@@ -56,17 +56,17 @@ class MFC():
     def retrieve_reply(self, addr):
         reply = self.ser.read(self.ser.inWaiting()).decode('utf-8', errors='ignore')
 
-        if reply == '':
-            self.log("No device found on address %i" %addr, error=True)
-            return 'N/A'
-
-
         if 'NAK' in reply:
             error_code = re.search("NAK(.*);", reply).group(1).strip()
             return error_dict[error_code]
-
-        else:
+        
+        try: 
             return re.search("ACK(.*);", reply).group(1).strip()
+        
+        except AttributeError:
+            self.log(f"Something went wrong - reply was {reply}", error=True)
+            return 'N/A'
+            
 
     def information(self, addr):
         FS = self.comm('FS?', addr=addr)
@@ -91,6 +91,6 @@ class MFC():
 
     def read_flow(self, addr):
         flow = self.comm('FX?', addr)
-        return float(flow)
+        return flow
 
 
