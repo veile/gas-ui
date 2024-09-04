@@ -8,6 +8,8 @@ class TC():
         print(f'Initialized TC on pin {CS_PINS}')
 
         self.tcs = [CS_PIN for CS_PIN in CS_PINS]
+
+        print(len(self))
     def __len__(self):
         return len(self.tcs)
 

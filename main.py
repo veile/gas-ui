@@ -5,20 +5,21 @@ from PyQt5 import QtWidgets, uic, QtCore
 from datetime import datetime
 from matplotlib.backends.backend_qt5agg import NavigationToolbar2QT as NavigationToolbar
 
+from fabric import Connection
 import traceback
 import sys
 import ui.rsc
 import os
 import numpy as np
-import time
 
 from functions import measure
 
 # Initalize GPIO pins on raspberry pi
 try:
     import RPi.GPIO as GPIO
-    from mks import MFC
-    from temperature import TC
+    from drivers.mks import MFC
+    from drivers.temperature import TC
+    from drivers.xgs600 import XGS600Driver
     
     GPIO.setwarnings(False)
     GPIO.setmode(GPIO.BCM)
@@ -29,6 +30,7 @@ except:
     import emulators.GPIO as GPIO
     from emulators.mks import MFC
     from emulators.temperature import TC
+    from emulators.xgs600 import XGS600Driver
 
 
 class GasControl(QtWidgets.QMainWindow):
@@ -62,24 +64,32 @@ class GasControl(QtWidgets.QMainWindow):
             'CO': {'addr': 230, 'flow_input': self.co_flow_input, 'flow_read': self.co_flow,'info': self.co_info},
         }
 
+        # Initializing devices
         # Thermocouple settings - should be implemented in GUI
-        self.tcs = TC(CS_PINS=['D20'], tc_type='N')
+        self.tcs = TC(CS_PINS=['D20', 'D21', 'D22', 'D23'], tc_type='N')
 
-        self.m = MFC()
+        self.m = MFC(port='/dev/ttyUSB0')
+        self.xgs600 = XGS600Driver(port='/dev/ttyUSB1')
+
+        # SSH Connections - Requires key authentication
+        # See:
+        # https://www.digitalocean.com/community/tutorials/how-to-configure-ssh-key-based-authentication-on-a-linux-server
+        # All scripts used are in the folder magpi
+        self.c_magpi003 = Connection('pi@magpi003') # Relay for pressure controller
+        self.c_magpi002 = Connection('pi@magpi002') # Pressure Controller
 
         # Multithread control
         self.threadpool = QtCore.QThreadPool()
 
         # Maybe run on its own thread - not implemented!
         self.timer = QtCore.QTimer()
-        self.timer.timeout.connect(self.update_flow)
+        self.timer.timeout.connect(self.update_values)
         self.timer.start(5000) # Maybe make interval customizable in GUI
 
         self.plot_timer = QtCore.QTimer()
         self.plot_timer.timeout.connect(self.update_plot)
 
         plot_toolbar = NavigationToolbar(self.plot_area.canvas, self)
-        # self.addToolBar(plot_toolbar)
         self.plot_area.layout().addWidget(plot_toolbar)
 
         # Setting current date into filename
@@ -91,7 +101,12 @@ class GasControl(QtWidgets.QMainWindow):
 
         self.actionUpdate_Values.triggered.connect(self.update_control)
 
+        # Checking valve state for valve located before pressure controller (controlled by magpi003)
+        result = self.c_magpi003.run("/home/pi/osa/env/bin/python /home/pi/osa/change_relay_state.py r 1") # Directory should be changed to new git folder to get updates
+        self.pc_valve.setChecked(result.stdout.strip('\n') == 'True')
+        self.pc_valve.clicked.connect(self.switch_pc_valve)
 
+        # Checking valve/relay state for button & make it possible to change valve state.
         for gas_valve in self.gas_valves.values():
             btn, relay = gas_valve['button'], gas_valve['relay']
 
@@ -112,6 +127,9 @@ class GasControl(QtWidgets.QMainWindow):
         # Setting the flow from input fields
         self.pushButton_set_flows.clicked.connect(self.set_flow)
 
+        # Setting downstream pressure on pressure controller
+        self.set_pressure_btn.clicked.connect(self.set_backpressure)
+
         # Starting measurement
         self.start_measurement_btn.clicked.connect(self.start_measurement)
 
@@ -121,10 +139,10 @@ class GasControl(QtWidgets.QMainWindow):
     def toggle_valve(self, checked, relay):
         if checked:
             GPIO.output(relay, GPIO.LOW)
-            print(f'Opened relay {relay}')
+            self.write_output(f'Opened relay {relay}')
         else:
             GPIO.output(relay, GPIO.HIGH)
-            print(f'Closed relay {relay}')
+            self.write_output(f'Closed relay {relay}')
 
     def open_valves(self, path):
         if path == 'bypass':
@@ -149,10 +167,35 @@ class GasControl(QtWidgets.QMainWindow):
 
         self.write_output(f'Valves have been opened through {path}')
 
+    def switch_pc_valve(self, checked):
+        # Current state - use to check if the state has changed during the runtime of the GUI
+        result = self.c_magpi003.run("/home/pi/osa/env/bin/python /home/pi/osa/change_relay_state.py r 1")
+        opened = result.stdout.strip('\n') == 'True'
+
+        # It should open the relay if it is checked
+        if checked and (not opened):
+            self.c_magpi003.run("/home/pi/osa/env/bin/python /home/pi/osa/change_relay_state.py w 1")
+            self.write_output('Pressure Control valve opened')
+
+        # Close it otherwise
+        elif not checked and opened:
+            self.c_magpi003.run("/home/pi/osa/env/bin/python /home/pi/osa/change_relay_state.py w 1")
+            self.write_output('Pressure Control valve closed')
+
     def set_flow(self):
+        console_output = 'MFC has been:\n'
         for mfc in self.flow_controllers.values():
             addr, flow_input = mfc['addr'], mfc['flow_input']
             self.m.set_flow(flow_input.value(), addr)
+            console_output += f'\t\t{addr} has been set to {flow_input.value()} mL/min\n'
+
+        self.write_output(console_output)
+
+    def set_backpressure(self):
+        pressure = self.set_pressure_input.value()
+        self.c_magpi002.run(f"/home/pi/VSM-gas-control/venv/bin/python /home/pi/set_pressure_PC.py {pressure}")
+
+        self.write_output(f'Downstream pressure set to {pressure} torr')
 
     def update_control(self, checked):
         if not checked:
@@ -160,11 +203,23 @@ class GasControl(QtWidgets.QMainWindow):
         else:
             self.timer.start(5000)
 
-    def update_flow(self):
+    def update_values(self):
+        # Updating MFC flow values
         for mfc in self.flow_controllers.values():
             addr, flow_read= mfc['addr'], mfc['flow_read']
             flow = self.m.read_flow(addr)
             flow_read.setText('<span style=" font-weight:600; color:#1fa208;">'+f'{flow}'+'</span>')
+
+        # Updating QMS pressure
+        p = self.xgs600.read_pressure('I1')
+        punit = self.xgs600.read_pressure_unit()
+
+        self.qms_pressure_label.setText(f'{p} {punit}')
+
+        # Update downstream pressure
+        result = self.c_magpi002.run("/home/pi/VSM-gas-control/venv/bin/python /home/pi/read_pressure_PC.py")
+        pressure = result.stdout.strip('\n')
+        self.downstream_pressure_label.setText(f'{pressure}')
 
     def exp_done(self):
         # self.exp_running_flag = False
@@ -225,7 +280,7 @@ class GasControl(QtWidgets.QMainWindow):
         filename = self.filename_input.text() + '.txt'
 
         try:
-            t, T1, T2 = np.loadtxt(filename, delimiter='\t', skiprows=1).T
+            data = np.loadtxt(filename, delimiter='\t', skiprows=1).T
         except Exception as e:
             print(e)
             return
@@ -233,8 +288,8 @@ class GasControl(QtWidgets.QMainWindow):
         ax = self.plot_area.canvas.axes
         ax.clear()
 
-        ax.plot(t, T1, 'o:', label='T1')
-        ax.plot(t, T2, 'o:', label='T2')
+        for i in range(1, data.shape[0]):
+            ax.plot(data[0], data[i], label=f'T{i}')
 
         ax.legend(loc='upper left', bbox_to_anchor=(-0.15, 1))
 

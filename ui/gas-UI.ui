@@ -570,7 +570,7 @@ QCheckBox::indicator {
       </widget>
      </item>
      <item row="1" column="2">
-      <widget class="QSpinBox" name="spinBox">
+      <widget class="QSpinBox" name="set_pressure_input">
        <property name="alignment">
         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
        </property>
@@ -583,7 +583,7 @@ QCheckBox::indicator {
       </widget>
      </item>
      <item row="3" column="2">
-      <widget class="QLabel" name="label_10">
+      <widget class="QLabel" name="qms_pressure_label">
        <property name="text">
         <string>#### mbar</string>
        </property>
@@ -593,7 +593,7 @@ QCheckBox::indicator {
       </widget>
      </item>
      <item row="2" column="2">
-      <widget class="QLabel" name="label_9">
+      <widget class="QLabel" name="downstream_pressure_label">
        <property name="text">
         <string>#### mbar</string>
        </property>
@@ -625,12 +625,12 @@ QCheckBox::indicator {
         </font>
        </property>
        <property name="text">
-        <string>Set backside pressure [mbar]:</string>
+        <string>Set backside pressure [torr]:</string>
        </property>
       </widget>
      </item>
      <item row="1" column="3">
-      <widget class="QPushButton" name="pushButton_set_pressure">
+      <widget class="QPushButton" name="set_pressure_btn">
        <property name="text">
         <string>Set</string>
        </property>
@@ -646,7 +646,36 @@ QCheckBox::indicator {
         </font>
        </property>
        <property name="text">
-        <string>Current backside pressure:</string>
+        <string>Current downstream pressure:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="3" alignment="Qt::AlignHCenter|Qt::AlignVCenter">
+      <widget class="QCheckBox" name="pc_valve">
+       <property name="styleSheet">
+        <string notr="true">QCheckBox::indicator:unchecked {
+    image: url(:/ui-elements/images/UI_elements/off_btn.png);
+}
+
+QCheckBox::indicator:unchecked:hover {
+	image: url(:/ui-elements/images/UI_elements/hover_btn.png);
+}
+
+QCheckBox::indicator:checked:hover {
+	image: url(:/ui-elements/images/UI_elements/hover_on_btn.png);
+}
+
+QCheckBox::indicator:checked {
+   image: url(:/ui-elements/images/UI_elements/on_btn.png);
+}
+
+QCheckBox::indicator {
+    width: 20px;
+    height: 20px;
+}</string>
+       </property>
+       <property name="text">
+        <string/>
        </property>
       </widget>
      </item>
@@ -663,32 +692,6 @@ QCheckBox::indicator {
     </property>
     <property name="orientation">
      <enum>Qt::Horizontal</enum>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="pushButton_1">
-    <property name="geometry">
-     <rect>
-      <x>390</x>
-      <y>270</y>
-      <width>75</width>
-      <height>23</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>1</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="pushButton_2">
-    <property name="geometry">
-     <rect>
-      <x>390</x>
-      <y>300</y>
-      <width>75</width>
-      <height>23</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>2</string>
     </property>
    </widget>
    <widget class="QLabel" name="label_15">

@@ -1,7 +1,7 @@
 import random
 
 class MFC:
-    def __init__(self):
+    def __init__(self, port):
         pass
 
     def checksum(self, msg):
@@ -28,7 +28,7 @@ class MFC:
 
     def read_flow(self, addr):
         self.comm('FX?', addr)
-        return random.random()*10
+        return f'{random.random()*10:.2f}'
 
     def information(self, addr):
         return f'Random info about {addr}'
