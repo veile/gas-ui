@@ -45,14 +45,21 @@ class UltraHeat():
     def retrieve_reply(self):
         reply = self.ser.read(self.ser.inWaiting()).decode('utf-8')
         
-        # Removing start_char, adress, command, CRC and endchar
+        # Removing start_char, address, command, CRC and endchar
         reply = reply[3:-3]
         
         # Converting the hexadecimal value to decimal 
         return int(reply, 16)
+
+    def get_current(self):
+        return self.comm('3i')/10
+
+    def get_frequency(self):
+        return self.comm('3f')
+
         
 if __name__ == '__main__':
     ps = UltraHeat()
     
-    # All examples are adress 3
+    # All examples are address 3
     print(ps.comm('3E'))

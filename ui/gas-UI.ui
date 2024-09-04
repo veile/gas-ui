@@ -900,7 +900,7 @@ QCheckBox::indicator {
    <widget class="QLineEdit" name="filename_input">
     <property name="geometry">
      <rect>
-      <x>550</x>
+      <x>560</x>
       <y>490</y>
       <width>341</width>
       <height>20</height>
@@ -910,7 +910,7 @@ QCheckBox::indicator {
    <widget class="QPushButton" name="start_measurement_btn">
     <property name="geometry">
      <rect>
-      <x>550</x>
+      <x>560</x>
       <y>520</y>
       <width>75</width>
       <height>23</height>
@@ -933,7 +933,7 @@ QCheckBox::indicator {
    <widget class="QLabel" name="label_16">
     <property name="geometry">
      <rect>
-      <x>550</x>
+      <x>560</x>
       <y>470</y>
       <width>341</width>
       <height>16</height>
@@ -946,7 +946,7 @@ QCheckBox::indicator {
    <widget class="QPushButton" name="stop_btn">
     <property name="geometry">
      <rect>
-      <x>630</x>
+      <x>640</x>
       <y>520</y>
       <width>75</width>
       <height>23</height>
@@ -960,6 +960,189 @@ font: bold;
     </property>
     <property name="text">
      <string>Stop</string>
+    </property>
+   </widget>
+   <widget class="QWidget" name="gridLayoutWidget_3">
+    <property name="geometry">
+     <rect>
+      <x>560</x>
+      <y>590</y>
+      <width>341</width>
+      <height>131</height>
+     </rect>
+    </property>
+    <layout class="QGridLayout" name="gridLayout_3">
+     <item row="0" column="1" alignment="Qt::AlignHCenter">
+      <widget class="QLabel" name="psu_current_label">
+       <property name="text">
+        <string>### A</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="0">
+      <widget class="QLabel" name="label_10">
+       <property name="text">
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Current [A]&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="0">
+      <widget class="QLabel" name="label_17">
+       <property name="text">
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Frequency [Hz]&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="1" alignment="Qt::AlignHCenter">
+      <widget class="QLabel" name="psu_frequency_label">
+       <property name="text">
+        <string>### Hz</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="0">
+      <widget class="QLabel" name="label_20">
+       <property name="text">
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Transformer ratio&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="1">
+      <widget class="QComboBox" name="transformer_ratio">
+       <property name="currentText">
+        <string>19:1</string>
+       </property>
+       <item>
+        <property name="text">
+         <string>10:1</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>11:1</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>12:1</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>13:1</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>14:1</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>15:1</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>16:1</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>17:1</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>18:1</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>19:1</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>20:1</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>21:1</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>22:1</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>23:1</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>24:1</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>25:1</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>26:1</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>27:1</string>
+        </property>
+       </item>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+   <widget class="QLabel" name="label_9">
+    <property name="geometry">
+     <rect>
+      <x>560</x>
+      <y>550</y>
+      <width>341</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:18pt; font-weight:600;&quot;&gt;Power Supply&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+   </widget>
+   <widget class="Line" name="line_2">
+    <property name="geometry">
+     <rect>
+      <x>540</x>
+      <y>40</y>
+      <width>20</width>
+      <height>681</height>
+     </rect>
+    </property>
+    <property name="orientation">
+     <enum>Qt::Vertical</enum>
+    </property>
+   </widget>
+   <widget class="Line" name="line_3">
+    <property name="geometry">
+     <rect>
+      <x>550</x>
+      <y>456</y>
+      <width>991</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="orientation">
+     <enum>Qt::Horizontal</enum>
     </property>
    </widget>
   </widget>

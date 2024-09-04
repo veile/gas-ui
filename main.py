@@ -20,6 +20,7 @@ try:
     from drivers.mks import MFC
     from drivers.temperature import TC
     from drivers.xgs600 import XGS600Driver
+    from drivers.ultraflex import UltraHeat
     
     GPIO.setwarnings(False)
     GPIO.setmode(GPIO.BCM)
@@ -31,6 +32,7 @@ except:
     from emulators.mks import MFC
     from emulators.temperature import TC
     from emulators.xgs600 import XGS600Driver
+    from emulators.ultraflex import UltraHeat
 
 
 class GasControl(QtWidgets.QMainWindow):
@@ -70,6 +72,7 @@ class GasControl(QtWidgets.QMainWindow):
 
         self.m = MFC(port='/dev/ttyUSB0')
         self.xgs600 = XGS600Driver(port='/dev/ttyUSB1')
+        self.psu = UltraHeat(port='/dev/ttyUSB2')
 
         # SSH Connections - Requires key authentication
         # See:
@@ -81,10 +84,11 @@ class GasControl(QtWidgets.QMainWindow):
         # Multithread control
         self.threadpool = QtCore.QThreadPool()
 
-        # Maybe run on its own thread - not implemented!
+        # Timer function should run on its own thread now
+        self.update_timer_ms = 2000 # Maybe make interval customizable in GUI
         self.timer = QtCore.QTimer()
         self.timer.timeout.connect(self.update_values)
-        self.timer.start(5000) # Maybe make interval customizable in GUI
+        self.timer.start(self.update_timer_ms)
 
         self.plot_timer = QtCore.QTimer()
         self.plot_timer.timeout.connect(self.update_plot)
@@ -201,9 +205,16 @@ class GasControl(QtWidgets.QMainWindow):
         if not checked:
             self.timer.stop()
         else:
-            self.timer.start(5000)
+            self.timer.start(self.update_timer_ms)
 
     def update_values(self):
+        # Setting up thread and signals
+        worker = Worker(self._update_values)
+
+        # Start thread
+        self.threadpool.start(worker)
+
+    def _update_values(self):
         # Updating MFC flow values
         for mfc in self.flow_controllers.values():
             addr, flow_read= mfc['addr'], mfc['flow_read']
@@ -219,7 +230,15 @@ class GasControl(QtWidgets.QMainWindow):
         # Update downstream pressure
         result = self.c_magpi002.run("/home/pi/VSM-gas-control/venv/bin/python /home/pi/read_pressure_PC.py")
         pressure = result.stdout.strip('\n')
-        self.downstream_pressure_label.setText(f'{pressure}')
+        if pressure != 'N/A':
+            self.downstream_pressure_label.setText(f'{pressure}')
+
+        # Update PSU info
+        current = self.psu.get_current()
+        freq = self.psu.get_frequency()
+
+        self.psu_frequency_label.setText(f'{float(freq)/1000} kHz')
+        self.psu_current_label.setText(f'{current} A')
 
     def exp_done(self):
         # self.exp_running_flag = False
