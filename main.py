@@ -10,6 +10,7 @@ import traceback
 import sys
 import ui.rsc
 import os
+import time
 import numpy as np
 
 from functions import measure
@@ -216,23 +217,29 @@ class GasControl(QtWidgets.QMainWindow):
         self.threadpool.start(worker)
 
     def _update_values(self):
+        print(datetime.today().strftime('%Y-%m-%d %H:%M:%S'))
+        data = [time.time(), datetime.today().strftime('%Y-%m-%d %H:%M:%S')]
         # Updating MFC flow values
-        for mfc in self.flow_controllers.values():
+        for gas, mfc in self.flow_controllers.items():
             addr, flow_read= mfc['addr'], mfc['flow_read']
             flow = self.m.read_flow(addr)
             flow_read.setText('<span style=" font-weight:600; color:#1fa208;">'+f'{flow}'+'</span>')
+
+            data.append(flow)
 
         # Updating QMS pressure
         p = self.xgs600.read_pressure('I1')
         punit = self.xgs600.read_pressure_unit()
 
         self.qms_pressure_label.setText(f'{p} {punit}')
+        data.append(p)
 
         # Update downstream pressure
         result = self.c_magpi002.run("/home/pi/VSM-gas-control/venv/bin/python /home/pi/read_pressure_PC.py")
         pressure = result.stdout.strip('\n')
         if pressure != 'N/A torr':
             self.downstream_pressure_label.setText(f'{pressure}')
+        data.append(pressure)
 
         # Update PSU info
         current = self.psu.get_current()
@@ -240,6 +247,17 @@ class GasControl(QtWidgets.QMainWindow):
 
         self.psu_frequency_label.setText(f'{float(freq)/1000} kHz')
         self.psu_current_label.setText(f'{current} A')
+
+        data.append(current)
+        data.append(freq)
+        print(datetime.today().strftime('%Y-%m-%d %H:%M:%S'))
+
+        with open('running_flag', 'r') as f:
+            exp_running_flag = bool(int(f.read()))
+        if exp_running_flag:
+            with open(self.info_filename, 'a') as f:
+                f.write("\t".join(str(x) for x in data)+'\n')
+
 
     def exp_done(self):
         # self.exp_running_flag = False
@@ -254,24 +272,32 @@ class GasControl(QtWidgets.QMainWindow):
             self.write_output('Measurement already running', error_flag=True)
             return
 
-        self.plot_timer.start(200)
-
         # Uses external file to follow if experiment is running
         with open('running_flag', 'w') as f:
             f.write('1')
 
-        # Setting up file
-        filename = self.filename_input.text() + '.txt'
+        # Setting up files
+        self.exp_filename = self.filename_input.text() + '.txt'
         header = 'Time [s]\t'
-        #T_header = "\t".join(['T%i [degC]' % i for i in range(len(self.tcs))])
+        # T_header = "\t".join(['T%i [degC]' % i for i in range(len(self.tcs))])
         T_header = "Temperature [degC]"
-        with open(filename, 'w') as file:
+        with open(self.exp_filename, 'w') as file:
             file.write(header+T_header + "\n")
+
+        self.info_filename = self.filename_input.text()+'_info.txt'
+        info_header = ('Time [s]\tDatetime\t'
+                       'Ar Flow [mL/min]\tH2 Flow [mL/min]\tN2 Flow [mL/min]\tNH3 Flow [mL/min]\tCO Flow [mL/min]\t'
+                       'QMS Pressure [mBar]\tDownstream Pressure [torr]\tCurrent [A]\tFrequency [kHz]')
+        with open(self.info_filename, 'w') as file:
+            file.write(info_header+'\n')
+
+        # Starting plot timer
+        self.plot_timer.start(200)
 
         # Parameters
 
         # Setting up thread and signals
-        worker = Worker(measure, filename=filename, tcs=self.tcs)
+        worker = Worker(measure, filename=self.exp_filename, tcs=self.tcs)
         worker.signals.result.connect(self.write_output)
         worker.signals.error.connect(
             lambda: self.write_output('Measurement Failed - See print output for more details', error_flag=True))
@@ -280,7 +306,7 @@ class GasControl(QtWidgets.QMainWindow):
         # Start thread
         self.threadpool.start(worker)
 
-        self.write_output(f'Measurement <span style="font-weight: 600;">{filename[:-4]}</span> started')
+        self.write_output(f'Measurement <span style="font-weight: 600;">{self.exp_filename[:-4]}</span> started')
 
     def stop(self):
         with open('running_flag', 'w') as f:
@@ -298,7 +324,7 @@ class GasControl(QtWidgets.QMainWindow):
         self.rs232options.show()
 
     def update_plot(self):
-        filename = self.filename_input.text() + '.txt'
+        filename = self.exp_filename
 
         try:
             data = np.loadtxt(filename, delimiter='\t', skiprows=1).T
