@@ -24,7 +24,7 @@ try:
     
     GPIO.setwarnings(False)
     GPIO.setmode(GPIO.BCM)
-    pins = [2, 3, 4, 5, 6, 7, 8, 12, 13]
+    pins = [2, 3, 4, 5, 6, 16, 17, 12, 13]
     GPIO.setup(pins, GPIO.OUT)
     
 except:
@@ -53,8 +53,8 @@ class GasControl(QtWidgets.QMainWindow):
             'CO': {'relay': 2, 'button': self.co_valve},
             'V1': {'relay': 13, 'button': self.valve1},
             'V2': {'relay': 12, 'button': self.valve2},
-            'V3': {'relay': 7, 'button': self.valve3},
-            'V4': {'relay': 8, 'button': self.valve4}
+            'V3': {'relay': 16, 'button': self.valve3},
+            'V4': {'relay': 17, 'button': self.valve4}
         }
 
         # Mass Flow controller settings
@@ -68,11 +68,12 @@ class GasControl(QtWidgets.QMainWindow):
 
         # Initializing devices
         # Thermocouple settings - should be implemented in GUI
-        self.tcs = TC(CS_PINS=['D20', 'D21', 'D22', 'D23'], tc_type='N')
+        #self.tcs = TC(CS_PINS=['D8'], tc_type='N')
+        self.tcs = TC()
 
         self.m = MFC(port='/dev/ttyUSB0')
-        self.xgs600 = XGS600Driver(port='/dev/ttyUSB1')
-        self.psu = UltraHeat(port='/dev/ttyUSB2')
+        self.xgs600 = XGS600Driver(port='/dev/ttyUSB2')
+        self.psu = UltraHeat(port='/dev/ttyUSB1')
 
         # SSH Connections - Requires key authentication
         # See:
@@ -230,7 +231,7 @@ class GasControl(QtWidgets.QMainWindow):
         # Update downstream pressure
         result = self.c_magpi002.run("/home/pi/VSM-gas-control/venv/bin/python /home/pi/read_pressure_PC.py")
         pressure = result.stdout.strip('\n')
-        if pressure != 'N/A':
+        if pressure != 'N/A torr':
             self.downstream_pressure_label.setText(f'{pressure}')
 
         # Update PSU info
@@ -262,7 +263,8 @@ class GasControl(QtWidgets.QMainWindow):
         # Setting up file
         filename = self.filename_input.text() + '.txt'
         header = 'Time [s]\t'
-        T_header = "\t".join(['T%i [degC]' % i for i in range(len(self.tcs))])
+        #T_header = "\t".join(['T%i [degC]' % i for i in range(len(self.tcs))])
+        T_header = "Temperature [degC]"
         with open(filename, 'w') as file:
             file.write(header+T_header + "\n")
 
