@@ -87,7 +87,7 @@ class GasControl(QtWidgets.QMainWindow):
         self.threadpool = QtCore.QThreadPool()
 
         # Timer function should run on its own thread now
-        self.update_timer_ms = 2000 # Maybe make interval customizable in GUI
+        self.update_timer_ms = 2500 # Maybe make interval customizable in GUI
         self.timer = QtCore.QTimer()
         self.timer.timeout.connect(self.update_values)
         self.timer.start(self.update_timer_ms)
