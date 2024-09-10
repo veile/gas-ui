@@ -5,8 +5,7 @@ def measure(filename, tcs):
     start = time.time()
     
     while (time.time() - start) < 600:
-        tcs.initiate()
-        time.sleep(0.4)
+
         
         with open('running_flag', 'r') as f:
             exp_running_flag = bool(int(f.read()))
@@ -19,6 +18,7 @@ def measure(filename, tcs):
 
         with open(filename, 'a') as file:
             file.write(output + "\n")
-               
+
+        time.sleep(0.4)
 
     return f'Measurement {filename[:-4]} finished'

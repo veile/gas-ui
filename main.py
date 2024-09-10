@@ -217,7 +217,6 @@ class GasControl(QtWidgets.QMainWindow):
         self.threadpool.start(worker)
 
     def _update_values(self):
-        print(datetime.today().strftime('%Y-%m-%d %H:%M:%S'))
         data = [time.time(), datetime.today().strftime('%Y-%m-%d %H:%M:%S')]
         # Updating MFC flow values
         for gas, mfc in self.flow_controllers.items():
@@ -235,22 +234,25 @@ class GasControl(QtWidgets.QMainWindow):
         data.append(p)
 
         # Update downstream pressure
-        result = self.c_magpi002.run("/home/pi/VSM-gas-control/venv/bin/python /home/pi/read_pressure_PC.py")
+        result = self.c_magpi002.run("/home/pi/VSM-gas-control/venv/bin/python /home/pi/read_pressure_PC.py",
+                                     hide=True)
         pressure = result.stdout.strip('\n')
-        if pressure != 'N/A torr':
+        if pressure != 'N/A':
             self.downstream_pressure_label.setText(f'{pressure}')
         data.append(pressure)
 
         # Update PSU info
-        current = self.psu.get_current()
-        freq = self.psu.get_frequency()
+        try:
+            current = self.psu.get_current()
+            freq = self.psu.get_frequency()
 
-        self.psu_frequency_label.setText(f'{float(freq)/1000} kHz')
-        self.psu_current_label.setText(f'{current} A')
+            self.psu_frequency_label.setText(f'{float(freq) / 1000} kHz')
+            self.psu_current_label.setText(f'{current} A')
+        except UnicodeDecodeError:
+            current, freq = 'N/A', 'N/A'
 
         data.append(current)
         data.append(freq)
-        print(datetime.today().strftime('%Y-%m-%d %H:%M:%S'))
 
         with open('running_flag', 'r') as f:
             exp_running_flag = bool(int(f.read()))

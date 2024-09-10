@@ -53,14 +53,16 @@ class TC():
         cs.direction = digitalio.Direction.OUTPUT
         self.thermocouple = adafruit_max31856.MAX31856(spi, cs, thermocouple_type=getattr(adafruit_max31856.ThermocoupleType, 'N'))
         self.thermocouple.noise_rejection = 50
-        
-    def initiate(self):
-        self.thermocouple.initiate_one_shot_measurement()
+
+        self.thermocouple.start_autoconverting()
 
     def get_T(self):
     
         output = self.thermocouple.unpack_temperature()
-        
-        print(self.thermocouple.fault)
-        print(output)
+        fault = self.thermocouple.fault
+
+        if True in fault.values():
+            print(fault)
+            return 'N/A'
+
         return [output]

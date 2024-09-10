@@ -80,8 +80,14 @@ class MFC():
         Sets flow to specified value in flow controller
         Maybe add validation with 'SX?'
         """
-        upper_limit = float(self.comm('FS?', addr))
-        flow = round(flow, 2)
+        attempts = 0
+        while attempts < 5:
+            try:
+                upper_limit = float(self.comm('FS?', addr))
+                flow = round(flow, 2)
+            except ValueError:
+                print(f'Trying to get full scale in set_flow - attempt {attempts} out of 5')
+                attempts += 1
 
         if 0 <= flow <= upper_limit:
             self.comm('SX!%f' %flow, addr)

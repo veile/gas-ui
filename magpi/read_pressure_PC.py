@@ -39,4 +39,4 @@ class PC():
 if __name__ == '__main__':
     p = PC()
     pressure = p.comm('PX?', 250)
-    print(f'{pressure} torr')
+    print(f'{pressure}')

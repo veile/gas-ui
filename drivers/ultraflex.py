@@ -34,7 +34,7 @@ class UltraHeat():
         msg = msg + CRC(msg)
         msg = msg + self.end_char
 
-        self.ser.write(msg.encode('utf-8'))
+        self.ser.write(msg.encode('ascii'))
         
         time.sleep(.1)
         
@@ -43,7 +43,7 @@ class UltraHeat():
         return reply
         
     def retrieve_reply(self):
-        reply = self.ser.read(self.ser.inWaiting()).decode('utf-8')
+        reply = self.ser.read(self.ser.inWaiting()).decode('ascii')
         
         # Removing start_char, address, command, CRC and endchar
         reply = reply[3:-3]
