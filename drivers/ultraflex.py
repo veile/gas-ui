@@ -36,7 +36,7 @@ class UltraHeat():
 
         self.ser.write(msg.encode('utf-8'))
         
-        time.sleep(.1)
+        time.sleep(.2)
         
         reply = self.retrieve_reply()
         
