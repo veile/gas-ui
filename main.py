@@ -25,7 +25,7 @@ try:
     
     GPIO.setwarnings(False)
     GPIO.setmode(GPIO.BCM)
-    pins = [2, 3, 4, 5, 6, 16, 17, 12, 13]
+    pins = [4, 5, 6, 16, 17, 12, 13, 18, 22]
     GPIO.setup(pins, GPIO.OUT)
     
 except:
@@ -50,8 +50,8 @@ class GasControl(QtWidgets.QMainWindow):
             'Ar': {'relay': 4, 'button': self.ar_valve},
             'H2': {'relay': 6, 'button': self.h2_valve},
             'N2': {'relay': 5, 'button': self.n2_valve},
-            'NH3': {'relay': 3, 'button': self.nh3_valve},
-            'CO': {'relay': 2, 'button': self.co_valve},
+            'NH3': {'relay': 22, 'button': self.nh3_valve},
+            'CO': {'relay': 18, 'button': self.co_valve},
             'V1': {'relay': 13, 'button': self.valve1},
             'V2': {'relay': 12, 'button': self.valve2},
             'V3': {'relay': 16, 'button': self.valve3},
@@ -72,8 +72,8 @@ class GasControl(QtWidgets.QMainWindow):
         #self.tcs = TC(CS_PINS=['D8'], tc_type='N')
         self.tcs = TC()
 
-        self.m = MFC(port='/dev/ttyUSB0')
-        self.xgs600 = XGS600Driver(port='/dev/ttyUSB2')
+        self.m = MFC(port='/dev/ttyUSB1')
+        self.xgs600 = XGS600Driver(port='/dev/ttyUSB0')
         self.psu = UltraHeat(port='/dev/ttyUSB1')
 
         # SSH Connections - Requires key authentication
@@ -248,7 +248,7 @@ class GasControl(QtWidgets.QMainWindow):
 
             self.psu_frequency_label.setText(f'{float(freq) / 1000} kHz')
             self.psu_current_label.setText(f'{current} A')
-        except UnicodeDecodeError:
+        except:
             current, freq = 'N/A', 'N/A'
 
         data.append(current)

@@ -4,7 +4,7 @@ import time
 def measure(filename, tcs):
     start = time.time()
     
-    while (time.time() - start) < 600:
+    while True:
 
         
         with open('running_flag', 'r') as f:
