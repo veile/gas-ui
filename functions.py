@@ -19,6 +19,6 @@ def measure(filename, tcs):
         with open(filename, 'a') as file:
             file.write(output + "\n")
 
-        time.sleep(0.4)
+        time.sleep(2)
 
     return f'Measurement {filename[:-4]} finished'

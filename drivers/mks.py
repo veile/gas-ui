@@ -46,7 +46,7 @@ class MFC():
 
         final_msg = "@@" + msg + check
         self.ser.write(final_msg.encode('utf-8'))
-        self.log(final_msg)
+        #self.log(final_msg)
 
         time.sleep(.1)
         reply = self.retrieve_reply(addr)

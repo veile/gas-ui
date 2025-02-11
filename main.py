@@ -294,7 +294,7 @@ class GasControl(QtWidgets.QMainWindow):
             file.write(info_header+'\n')
 
         # Starting plot timer
-        self.plot_timer.start(200)
+        self.plot_timer.start()
 
         # Parameters
 
