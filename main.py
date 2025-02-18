@@ -28,7 +28,8 @@ try:
     pins = [4, 5, 6, 16, 17, 12, 13, 18, 22]
     GPIO.setup(pins, GPIO.OUT)
     
-except:
+except Exception as e:
+    print(f'Error: {e}\mRunning emulation...')
     import emulators.GPIO as GPIO
     from emulators.mks import MFC
     from emulators.temperature import TC
