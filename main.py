@@ -13,7 +13,7 @@ import os
 import time
 import numpy as np
 
-from functions import measure
+# from functions import measure
 
 # Initalize GPIO pins on raspberry pi
 try:
@@ -71,10 +71,10 @@ class GasControl(QtWidgets.QMainWindow):
         # Initializing devices
         # Thermocouple settings - should be implemented in GUI
         #self.tcs = TC(CS_PINS=['D8'], tc_type='N')
-        self.tcs = TC()
+        #self.tcs = TC()
 
-        self.m = MFC(port='/dev/ttyUSB1')
-        self.xgs600 = XGS600Driver(port='/dev/ttyUSB0')
+        self.m = MFC(port='/dev/ttyUSB0')
+        self.xgs600 = XGS600Driver(port='/dev/ttyUSB2')
         self.psu = UltraHeat(port='/dev/ttyUSB1')
 
         # SSH Connections - Requires key authentication
@@ -109,7 +109,7 @@ class GasControl(QtWidgets.QMainWindow):
         self.actionUpdate_Values.triggered.connect(self.update_control)
 
         # Checking valve state for valve located before pressure controller (controlled by magpi003)
-        result = self.c_magpi003.run("/home/pi/osa/env/bin/python /home/pi/osa/change_relay_state.py r 1") # Directory should be changed to new git folder to get updates
+        result = self.c_magpi003.run("/home/pi/osa/env/bin/python /home/pi/osa/change_relay_state.py r 3") # Directory should be changed to new git folder to get updates
         self.pc_valve.setChecked(result.stdout.strip('\n') == 'True')
         self.pc_valve.clicked.connect(self.switch_pc_valve)
 
@@ -176,17 +176,17 @@ class GasControl(QtWidgets.QMainWindow):
 
     def switch_pc_valve(self, checked):
         # Current state - use to check if the state has changed during the runtime of the GUI
-        result = self.c_magpi003.run("/home/pi/osa/env/bin/python /home/pi/osa/change_relay_state.py r 1")
+        result = self.c_magpi003.run("/home/pi/osa/env/bin/python /home/pi/osa/change_relay_state.py r 3")
         opened = result.stdout.strip('\n') == 'True'
 
         # It should open the relay if it is checked
         if checked and (not opened):
-            self.c_magpi003.run("/home/pi/osa/env/bin/python /home/pi/osa/change_relay_state.py w 1")
+            self.c_magpi003.run("/home/pi/osa/env/bin/python /home/pi/osa/change_relay_state.py w 3")
             self.write_output('Pressure Control valve opened')
 
         # Close it otherwise
         elif not checked and opened:
-            self.c_magpi003.run("/home/pi/osa/env/bin/python /home/pi/osa/change_relay_state.py w 1")
+            self.c_magpi003.run("/home/pi/osa/env/bin/python /home/pi/osa/change_relay_state.py w 3")
             self.write_output('Pressure Control valve closed')
 
     def set_flow(self):
@@ -200,7 +200,7 @@ class GasControl(QtWidgets.QMainWindow):
 
     def set_backpressure(self):
         pressure = self.set_pressure_input.value()
-        self.c_magpi002.run(f"/home/pi/VSM-gas-control/venv/bin/python /home/pi/set_pressure_PC.py {pressure}")
+        self.c_magpi002.run(f"/home/pi/mks-control/venv/bin/python /home/pi/mks-control/set_pressure_PC.py {pressure}")
 
         self.write_output(f'Downstream pressure set to {pressure} torr')
 
@@ -235,7 +235,7 @@ class GasControl(QtWidgets.QMainWindow):
         data.append(p)
 
         # Update downstream pressure
-        result = self.c_magpi002.run("/home/pi/VSM-gas-control/venv/bin/python /home/pi/read_pressure_PC.py",
+        result = self.c_magpi002.run("/home/pi/mks-control/venv/bin/python /home/pi/mks-control/read_pressure_PC.py",
                                      hide=True)
         pressure = result.stdout.strip('\n')
         if pressure != 'N/A':
@@ -280,12 +280,12 @@ class GasControl(QtWidgets.QMainWindow):
             f.write('1')
 
         # Setting up files
-        self.exp_filename = self.filename_input.text() + '.txt'
-        header = 'Time [s]\t'
-        # T_header = "\t".join(['T%i [degC]' % i for i in range(len(self.tcs))])
-        T_header = "Temperature [degC]"
-        with open(self.exp_filename, 'w') as file:
-            file.write(header+T_header + "\n")
+        # self.exp_filename = self.filename_input.text() + '.txt'
+        # header = 'Time [s]\t'
+        # # T_header = "\t".join(['T%i [degC]' % i for i in range(len(self.tcs))])
+        # T_header = "Temperature [degC]"
+        # with open(self.exp_filename, 'w') as file:
+            # file.write(header+T_header + "\n")
 
         self.info_filename = self.filename_input.text()+'_info.txt'
         info_header = ('Time [s]\tDatetime\t'
@@ -294,22 +294,23 @@ class GasControl(QtWidgets.QMainWindow):
         with open(self.info_filename, 'w') as file:
             file.write(info_header+'\n')
 
-        # Starting plot timer
-        self.plot_timer.start()
+        # # TC readings
+        # # Starting plot timer
+        # self.plot_timer.start()
 
-        # Parameters
+        # # Parameters
 
-        # Setting up thread and signals
-        worker = Worker(measure, filename=self.exp_filename, tcs=self.tcs)
-        worker.signals.result.connect(self.write_output)
-        worker.signals.error.connect(
-            lambda: self.write_output('Measurement Failed - See print output for more details', error_flag=True))
-        worker.signals.finished.connect(self.exp_done)
+        # # Setting up thread and signals
+        # worker = Worker(measure, filename=self.exp_filename, tcs=self.tcs)
+        # worker.signals.result.connect(self.write_output)
+        # worker.signals.error.connect(
+            # lambda: self.write_output('Measurement Failed - See print output for more details', error_flag=True))
+        # worker.signals.finished.connect(self.exp_done)
 
-        # Start thread
-        self.threadpool.start(worker)
+        # # Start thread
+        # self.threadpool.start(worker)
 
-        self.write_output(f'Measurement <span style="font-weight: 600;">{self.exp_filename[:-4]}</span> started')
+        self.write_output(f'Measurement <span style="font-weight: 600;">{self.info_filename[:-4]}</span> started')
 
     def stop(self):
         with open('running_flag', 'w') as f:

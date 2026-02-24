@@ -15,10 +15,14 @@ def measure(filename, tcs):
         temperatures = '\t'.join(list(map(str, tcs.get_T())))
 
         output = f'{time.time()}\t'+temperatures
+        
+        try:
+            with open(filename, 'a') as file:
+                file.write(output + "\n")
+                
+        except OSError as e:
+            print(e)
 
-        with open(filename, 'a') as file:
-            file.write(output + "\n")
-
-        time.sleep(2)
+        time.sleep(.3)
 
     return f'Measurement {filename[:-4]} finished'
